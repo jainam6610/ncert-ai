@@ -1,0 +1,26 @@
+from transformers import GPT2Tokenizer, GPT2LMHeadModel
+import torch
+
+# Load tokenizer and model
+tokenizer = GPT2Tokenizer.from_pretrained("distilgpt2")
+model = GPT2LMHeadModel.from_pretrained("distilgpt2")
+
+# Input context
+context = "The NCERT Class 10 Science chapter explains the process of photosynthesis. Possible question:"
+inputs = tokenizer.encode(context, return_tensors="pt")
+
+# Generate text with better parameters
+outputs = model.generate(
+    inputs,
+    max_length=100,
+    num_return_sequences=1,
+    temperature=0.8,             # controls creativity (0.7–1.0 good range)
+    top_k=50,                    # limits top tokens considered
+    top_p=0.95,                  # nucleus sampling
+    repetition_penalty=1.3,      # penalizes repeated phrases
+    pad_token_id=tokenizer.eos_token_id
+)
+
+# Decode and print
+print("\nGenerated Question:\n")
+print(tokenizer.decode(outputs[0], skip_special_tokens=True))
